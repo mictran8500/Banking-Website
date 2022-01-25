@@ -61,7 +61,7 @@ nav.addEventListener('mouseover', handleHover.bind(0.5));
 // Undos fading of other menu links
 nav.addEventListener('mouseout', handleHover.bind(1));
 
-// Modal functionalities
+/* Modal functionalities */
 const openModal = function (e) {
   e.preventDefault();
 
@@ -87,7 +87,7 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-// Smooth page navigation scrolling using event delagation (bubbling up)
+/* Smooth page navigation scrolling using event delagation (bubbling up) */
 document.querySelector('.nav__links').addEventListener('click', function (e) {
   // This prevents the links from automatically going to section
   e.preventDefault();
@@ -139,3 +139,28 @@ tabsContainer.addEventListener('click', function (e) {
     .querySelector(`.operations__content--${currTab.dataset.tab}`)
     .classList.add('operations__content--active');
 });
+
+/* Lazy Loading Images */
+const imgTargets = document.querySelectorAll('img[data-src]');
+
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+
+  // Replace src with data-src
+  entry.target.src = entry.target.dataset.src;
+
+  // Only remove blurry img when it is done loading: for slower network
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img');
+  });
+
+  observer.unobserve(entry.target);
+};
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+});
+
+imgTargets.forEach(img => imgObserver.observe(img));
