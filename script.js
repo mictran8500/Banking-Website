@@ -142,10 +142,8 @@ tabsContainer.addEventListener('click', function (e) {
 
 /* Lazy Loading Images */
 const imgTargets = document.querySelectorAll('img[data-src]');
-
 const loadImg = function (entries, observer) {
   const [entry] = entries;
-
   if (!entry.isIntersecting) return;
 
   // Replace src with data-src
@@ -155,12 +153,92 @@ const loadImg = function (entries, observer) {
   entry.target.addEventListener('load', function () {
     entry.target.classList.remove('lazy-img');
   });
-
   observer.unobserve(entry.target);
 };
+
 const imgObserver = new IntersectionObserver(loadImg, {
   root: null,
   threshold: 0,
 });
-
 imgTargets.forEach(img => imgObserver.observe(img));
+
+/* Sliding component */
+const slideFn = function () {
+  const slides = document.querySelectorAll('.slide');
+  let currSlide = 0;
+  const maxSlide = slides.length;
+  const sldBtnRight = document.querySelector('.slider__btn--right');
+  const sldBtnLeft = document.querySelector('.slider__btn--left');
+  const dotContainer = document.querySelector('.dots');
+  const slider = document.querySelector('.slider');
+  // slider.style.overflow = 'visible';
+
+  // Translating each slide
+  const goToSlide = function (slide) {
+    slides.forEach(
+      (sld, i) => (sld.style.transform = `translateX(${100 * (i - slide)}%)`) //0%, 100%, 200%...
+    );
+  };
+
+  // Dots under the slides
+  const createDots = function () {
+    slides.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        `<button class="dots__dot" data-slide="${i}"></button>`
+      );
+    });
+  };
+
+  const activateDot = function (slide) {
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+    // Reminder: slide is just a number
+    document
+      .querySelector(`.dots__dot[data-slide="${slide}"]`)
+      .classList.add('dots__dot--active');
+  };
+
+  // Initialize to first slide and create dots
+  const init = function () {
+    goToSlide(0);
+    createDots();
+    activateDot(0);
+  };
+  init();
+
+  // Event handlers
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('dots__dot')) {
+      //Destructuring
+      const { slide } = e.target.dataset;
+
+      goToSlide(slide);
+      activateDot(currSlide);
+    }
+  });
+
+  sldBtnRight.addEventListener('click', function () {
+    if (currSlide === maxSlide - 1) {
+      currSlide = 0;
+    } else {
+      currSlide++;
+    }
+    goToSlide(currSlide);
+    activateDot(currSlide);
+  });
+
+  sldBtnLeft.addEventListener('click', function () {
+    if (currSlide === 0) {
+      currSlide = maxSlide - 1;
+    } else {
+      currSlide--;
+    }
+    goToSlide(currSlide);
+    activateDot(currSlide);
+  });
+};
+// Actually calling our slider function
+slideFn();
