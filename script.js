@@ -1,13 +1,67 @@
 'use strict';
 
-// Element Selections
+/* Element Selections */
 const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const learnMoreBtn = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+const nav = document.querySelector('.nav');
 
+/* Nav functionalities */
+
+// Sticky Navigation: Intersection Observer API
+const header = document.querySelector('.header');
+const navHeight = nav.getBoundingClientRect().height;
+
+const stickyNav = function (entries) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  // threshold is 0 when header is completely out of view
+  threshold: 0,
+  rootMargin: `-${navHeight}px`,
+});
+headerObserver.observe(header);
+
+// Menu fade animation
+const handleHover = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const currlink = e.target;
+    // Searches closest parent of link to get all siblings of link
+    const siblings = currlink.closest('.nav').querySelectorAll('.nav__link');
+    const logo = currlink.closest('.nav').querySelector('img');
+
+    // Selecting all siblings besides current target
+    siblings.forEach(sib => {
+      if (sib !== currlink) {
+        sib.style.opacity = this;
+      }
+    });
+
+    logo.style.opacity = this;
+  }
+};
+
+// Fades other links in menu on hover
+// Can't pass in handleHover(e, 0.5) because this returns a value from the handleHover function
+// Event listeners require that only functions be passed in, aka only handleHover
+// .bind() returns a new function that sets "this" to the argument, aka: 0.5 and 1
+nav.addEventListener('mouseover', handleHover.bind(0.5));
+
+// Undos fading of other menu links
+nav.addEventListener('mouseout', handleHover.bind(1));
+
+// Modal functionalities
 const openModal = function (e) {
   e.preventDefault();
 
@@ -66,10 +120,6 @@ learnMoreBtn.addEventListener('click', function (e) {
     behavior: 'smooth',
   });
 });
-
-const tabs = document.querySelectorAll('.operations__tab');
-const tabsContainer = document.querySelector('.operations__tab-container');
-const tabsContent = document.querySelectorAll('.operations__content');
 
 // Tabbing Operations Component
 tabsContainer.addEventListener('click', function (e) {
