@@ -2,7 +2,7 @@
 This is a responsive sample website I created to help reinforce my JavaScript abilities.
 
 Features Include:  
-- Lazy loaded images  
+- Lazy loaded images (or better performance)  
 - Display tabs  
 - Content slide bar  
 
